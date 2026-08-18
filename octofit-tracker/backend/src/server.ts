@@ -8,6 +8,10 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
 const codespaceName = process.env.CODESPACE_NAME;
+const host = process.env.HOST || (codespaceName ? '0.0.0.0' : 'localhost');
+const baseUrl = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : `http://localhost:${PORT}`;
 
 app.use(express.json());
 
@@ -18,9 +22,7 @@ app.get('/api/health', (_req, res) => {
 const makeResponse = (entity: string, payload: unknown) => ({
   ok: true,
   message: `${entity} endpoint is ready`,
-  baseUrl: codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev`
-    : `http://localhost:${PORT}`,
+  baseUrl,
   data: payload,
 });
 
@@ -49,9 +51,7 @@ app.get('/api/workouts/', async (_req, res) => {
   res.json(makeResponse('Workouts', workouts));
 });
 
-app.listen(PORT, () => {
-  console.log(`Octofit Tracker API listening on port ${PORT}`);
-  console.log(
-    `API base URL: ${codespaceName ? `https://${codespaceName}-8000.app.github.dev` : `http://localhost:${PORT}`}`
-  );
+app.listen(PORT, host, () => {
+  console.log(`Octofit Tracker API listening on ${host}:${PORT}`);
+  console.log(`API base URL: ${baseUrl}`);
 });
