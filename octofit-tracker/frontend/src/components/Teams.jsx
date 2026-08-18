@@ -9,6 +9,11 @@ const getApiBaseUrl = () => {
   return 'http://localhost:8000'
 }
 
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME
+const teamsUrl = codespaceName && codespaceName.trim() !== ''
+  ? `https://${codespaceName}-8000.app.github.dev/api/teams/`
+  : 'http://localhost:8000/api/teams/'
+
 const normalizeData = (payload) => {
   if (Array.isArray(payload)) return payload
   if (payload && Array.isArray(payload.data)) return payload.data
@@ -24,7 +29,7 @@ function Teams() {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await fetch(`${getApiBaseUrl()}/api/teams/`)
+        const response = await fetch(teamsUrl)
         if (!response.ok) throw new Error(`Request failed with status ${response.status}`)
 
         const payload = await response.json()
