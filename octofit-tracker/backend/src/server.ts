@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import './config/database';
 import { Activity, LeaderboardEntry, Team, User, Workout } from './models/fitness';
@@ -13,6 +14,10 @@ const baseUrl = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
   : `http://localhost:${PORT}`;
 
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
 app.use(express.json());
 
 app.get('/api/health', (_req, res) => {
